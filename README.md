@@ -1,6 +1,5 @@
-# northwind-data-analysis
+# North Wind Data Analysis
 SQL data analysis project for Northwind Foods post-merger business integration.
-## Profile & Core Competencies / Kompetenzprofil
 ### English Summary
 *   **Project Goal:** Analyzed the global B2B Northwind database to deliver data-driven insights on operational scale, supply chain efficiency, procurement costs, and shipping carrier SLAs.
 *   **Technical Skills Applied:** Multi-table Joins (`INNER`, `LEFT`), Advanced Aggregations (`COUNT`, `SUM`, `AVG`), Group Filtering (`HAVING`), Reusable Database Views (`CREATE VIEW`), Subqueries (`NOT IN`), and Common Table Expressions (CTEs) with conditional logic (`CASE WHEN`).
@@ -31,8 +30,8 @@ This analysis utilizes data from the following core structural tables:
 
 ## 4. Data Exploration & Baseline Metrics
 
-### Aufgabe 1: Total Product Portfolio
-**Business Question:** Wie viele Produkte werden von Northwind Foods angeboten? (How many products are offered by Northwind Foods?)
+### 1: Total Product Portfolio
+**Business Question:** How many products are offered by Northwind Foods?
 
 ```sql
 SELECT 
@@ -42,8 +41,8 @@ FROM Products;
 *   **Execution Output:** 77 products
 *   **Business Takeaway:** Northwind maintains a concentrated portfolio of 77 unique products, allowing for streamlined product management.
 
-### Aufgabe 2: Corporate Customer Base
-**Business Question:** Wie viele Firmenkunden hat Northwind Foods? (How many corporate clients does Northwind Foods have?)
+### 2: Corporate Customer Base
+**Business Question:** How many corporate clients does Northwind Foods have?
 
 ```sql
 SELECT 
@@ -52,8 +51,8 @@ FROM Customers;
 ```
 *   **Execution Output:** 93 customers
 *   **Business Takeaway:** The company serves a distinct network of 93 corporate clients, highlighting the importance of individual B2B client management.
-### Aufgabe 3: Monthly Transactional Volume (March 1997)
-**Business Question:** Wie viele Bestellungen wurden insgesamt im März 1997 aufgegeben? (How many total orders were placed in March 1997?)
+### 3: Monthly Transactional Volume (March 1997)
+**Business Question:** How many total orders were placed in March 1997?
 
 ```sql
 SELECT 
@@ -64,8 +63,8 @@ WHERE YEAR(OrderDate) = 1997
 ```
 *   **Execution Output:** 30 orders
 *   **Business Takeaway:** Isolating specific monthly volumes allows the company to establish seasonal baseline trends and track month-over-month transactional activity.
-### Aufgabe 4: Geographic Order Distribution (Multi-Table Joins)
-**Business Question:** Wie viele Bestellungen werden in jedes Land geliefert? (How many orders are shipped to each destination country, ordered alphabetically?)
+### 4: Geographic Order Distribution (Multi-Table Joins)
+**Business Question:** How many orders are shipped to each destination country, ordered alphabetically?
 
 ```sql
 SELECT 
@@ -80,7 +79,7 @@ ORDER BY c.Country ASC;
 *   **Execution Output (Top 5 Distribution Markets):**
     *   Argentina: 16 orders
     *   Austria: 40 orders
-    *   **Belgium: 19 orders (Quiz Milestone Line 3)**
+    *   Belgium: 19 orders 
     *   Brazil: 83 orders
     *   Canada: 30 orders
 *   **Business Takeaway:** Linking transactional orders to customer geographies highlights regional market volume. This logic establishes which international corridors generate the heaviest shipping traffic, directly affecting logistics planning and freight partner allocations.
@@ -100,8 +99,8 @@ Maintaining this separation ensures historical sales transactions preserve the e
 
 ## 6. Financial Revenue Analysis
 
-### Aufgabe 5: Gross Revenue Calculation (Q2-Q3 1997)
-**Business Question:** Wie hoch ist der Gesamtumsatz aller Bestellungen im Zeitraum zwischen April und Juli 1997? (What is the total gross revenue generated from all orders between April and July 1997?)
+### 5: Gross Revenue Calculation (Q2-Q3 1997)
+**Business Question:** What is the total gross revenue generated from all orders between April and July 1997?
 
 ```sql
 SELECT 
@@ -132,8 +131,8 @@ To execute deeper catalog audits, the following relational expansion is implemen
 
 ## 8. Catalog & Inventory Optimization Analysis
 
-### Aufgabe 6: Product Category & Inventory Representation
-**Business Question:** Wie häufig sind die jeweiligen Produktkategorien vertreten? (What is the total product count and sum of warehouse units in stock for each product category, sorted by available inventory descending?)
+### 6: Product Category & Inventory Representation
+**Business Question:** What is the total product count and sum of warehouse units in stock for each product category, sorted by available inventory descending?
 
 ```sql
 SELECT 
@@ -150,9 +149,9 @@ LIMIT 3;
 *   **Execution Output (Top 3 Heavy Inventory Categories):**
     *   Seafood: 12 products | 701.0 units in stock
     *   Beverages: 12 products | 559.0 units in stock
-    *   **Condiments: 12 products | 507.0 units in stock (Quiz Milestone Line 3)**
+    *   Condiments: 12 products | 507.0 units in stock 
 *   **Business Takeaway:** This multi-aggregate analysis evaluates inventory distribution across product segments. While Seafood, Beverages, and Condiments share an identical count of unique stock-keeping units (12 products each), Seafood carries a significantly higher capital commitment in the warehouse. Tracking this disparity allows supply chain teams to optimize working capital allocations.
-### Aufgabe 7: Procurement Asset Valuation & Capital Binding
+### 7: Procurement Asset Valuation & Capital Binding
 **Business Question:** Welche Beschaffungskosten stehen hinter den Produktkategorien? (What is the monetary wholesale valuation of the current warehouse inventory, active incoming orders, and the combined overall asset exposure calculated per product category?)
 
 ```sql
@@ -212,8 +211,8 @@ JOIN Categories AS c ON p.CategoryID = c.CategoryID;
 To audit procurement pipelines, we analyze how raw products flow from international vendors into the central warehouse:
 *   `Suppliers`: Tracks vendor company profiles, geographical origins, and logistics contact details. It maps directly to the `Products` table via a Foreign Key relationship on `SupplierID`.
 
-### Aufgabe 8: Designing a Reusable Analytics View (Data Architecture)
-**Business Question:** Erstelle einen View, der die Tabellen Suppliers, Products und Categories miteinander verknüpft. (Build a consolidated, reusable database View that integrates Suppliers, Products, and Categories to streamline subsequent supply chain and product performance queries.)
+### : Designing a Reusable Analytics View (Data Architecture)
+**Business Question:** Build a consolidated, reusable database View that integrates Suppliers, Products, and Categories to streamline subsequent supply chain and product performance queries.
 
 ```sql
 CREATE OR REPLACE VIEW suppliersproducts AS (
@@ -245,8 +244,8 @@ SELECT * FROM suppliersproducts LIMIT 10;
     *   Outback Lager | Beverages | 7 | Pavlova, Ltd. | 15.0
 
 *   **Business Takeaway:** Creating a database View abstracts the underlying table joins into a single virtual table. This strategy improves reporting performance, ensures data consistency across the analytical team, and creates a clean data source that can be easily plugged directly into business intelligence tools like Power BI.
-### Aufgabe 9: Filtered Portfolio Extraction via View Layer
-**Business Question:** Erzeuge eine Liste aller Produktnamen der Kategorie 'Confections' sowie die dazugehörigen Namen der Lieferunternehmen. Sortiere die Liste alphabetisch nach den Produktnamen. (Generate a filtered list of all product names under the 'Confections' category along with their supplier names, ordered alphabetically by product name.)
+### 9: Filtered Portfolio Extraction via View Layer
+**Business Question:** Generate a filtered list of all product names under the 'Confections' category along with their supplier names, ordered alphabetically by product name.
 
 ```sql
 SELECT 
@@ -264,8 +263,8 @@ LIMIT 3;
     *   **Maxilaku | Karkki Oy **
 *   **Business Takeaway:** This task demonstrates the operational utility of a view layer. By querying the virtual table directly, we isolate specific category lines and track supplier distribution networks instantly without repeating expensive join instructions.
 
-*   ### Aufgabe 10: Exclusive Vendor Segment Isolation (Subqueries & Set Logic)
-**Business Question:** Gib eine Liste aller Lieferunternehmen aus, die Produkte aus der Kategorie 'Grains/Cereals' liefern, aber keine Produkte der Kategorie 'Dairy Products'. Sortiere die Liste alphabetisch nach den Namen der Lieferunternehmen. (Extract a distinct list of all suppliers that deliver products in the 'Grains/Cereals' category, but strictly do not supply any products from the 'Dairy Products' category, ordered alphabetically.)
+*   ### 10: Exclusive Vendor Segment Isolation (Subqueries & Set Logic)
+**Business Question:** Extract a distinct list of all suppliers that deliver products in the 'Grains/Cereals' category, but strictly do not supply any products from the 'Dairy Products' category, ordered alphabetically.
 
 ```sql
 SELECT 
@@ -286,10 +285,10 @@ LIMIT 3;
 *   **Execution Output (Target Vendor Segment):**
     *   G'day, Mate | Grains/Cereals | Filo Mix
     *   Leka Trading | Grains/Cereals | Singaporean Hokkien Fried Mee
-    *   **Pasta Buttini s.r.l. | Grains/Cereals | Gnocchi di nonna Alice (Quiz Milestone Line 3)**
+    *   Pasta Buttini s.r.l. | Grains/Cereals | Gnocchi di nonna Alice 
 *   **Business Takeaway:** This query applies cross-category exclusion logic to isolate specific vendor characteristics. In procurement, identifying suppliers that specialize heavily in one niche (Grains/Cereals) while having zero footprint in another volatile market (Dairy Products) allows risk management teams to map supplier dependencies and negotiate targeted service level agreements (SLAs).
-### Aufgabe 11: Multi-Category Vendor Pricing Analysis (The HAVING Clause)
-**Business Question:** Gib eine Liste aller Lieferunternehmen aus, die Produkte aus den Kategorien 'Beverages' oder 'Condiments' liefern und deren durchschnittliche Produktpreise mindestens 17 Euro betragen. Sortiere absteigend nach dem Durchschnittspreis. (Extract all suppliers delivering 'Beverages' or 'Condiments' whose average product price is at least 17 Euros, sorted by average price descending.)
+### 11: Multi-Category Vendor Pricing Analysis (The HAVING Clause)
+**Business Question:** Extract all suppliers delivering 'Beverages' or 'Condiments' whose average product price is at least 17 Euros, sorted by average price descending.
 
 ```sql
 SELECT 
@@ -306,7 +305,7 @@ LIMIT 3;
 *   **Execution Output (Top 3 Premium Beverage & Condiment Suppliers):**
     *   Aux joyeux ecclésiastiques | 140.750
     *   Leka Trading | 32.725
-    *   **Grandma Kelly's Homestead | 32.500 (Quiz Milestone Line 3)**
+    *   Grandma Kelly's Homestead | 32.500 
 *   **Business Takeaway:** This query demonstrates advanced aggregated filtering using the `HAVING` clause to isolate premium, high-margin vendors within targeted inventory categories. Identifying suppliers with high average order costs helps finance and procurement teams target the right vendor partnerships for strategic volume discount negotiations.
 ---
 
@@ -316,8 +315,8 @@ LIMIT 3;
 To measure logistical reliability and transportation efficiency, we map the downstream distribution network:
 *   `Shippers`: Contains the list of external shipping partners and links directly to the `Orders` ledger where the carrier ID is recorded under the column `ShipVia`.
 
-### Aufgabe 12: Shipping Carrier Fulfillment & Capacity Performance
-**Business Question:** Wie ist die Performance der Speditionen? (What is the performance profile of each shipping carrier regarding average fulfillment speed in days, delivery volume, and freight weight distributions?)
+### 12: Shipping Carrier Fulfillment & Capacity Performance
+**Business Question:** What is the performance profile of each shipping carrier regarding average fulfillment speed in days, delivery volume, and freight weight distributions?
 
 ```sql
 SELECT 
@@ -337,15 +336,15 @@ LIMIT 3;
 *   **Execution Output (Complete Logistics Portfolio):**
     *   Federal Shipping | Avg Speed: 7.5 days | Avg Freight: 80.4 | Min: 0.4 | Max: 1007.6 | Orders: 255
     *   Speedy Express | Avg Speed: 8.6 days | Avg Freight: 65.0 | Min: 0.1 | Max: 458.8 | Orders: 249
-    *   **United Package | Avg Speed: 9.2 days | Avg Freight: 86.6 | Min: 1.4 | Max: 890.8 | Orders: 326 (Quiz Milestone Line 3)**
+    *   United Package | Avg Speed: 9.2 days | Avg Freight: 86.6 | Min: 1.4 | Max: 890.8 | Orders: 326 
 *   **Business Takeaway:** This service level agreement (SLA) report evaluates logistical bottlenecks. While Federal Shipping provides the fastest turnaround times (7.5 days on average), United Package absorbs the highest logistical stress, moving the largest total package volume (326 orders) and maintaining the heaviest average cargo load capacity (86.6).
 
 ---
 
 ## 11. Strategic Market Insights & Advanced Analytics Case
 
-### Aufgabe 13: Delivery Delays & Geographic Purchasing Power (M&A Capstone Matrix)
-**Business Question:** Welche Lieferverzögerungen gibt es pro Land? (Generate a comprehensive macro-economic overview analyzing market size, total revenue, shipping non-fulfillment rates, and localized shipping compliance percentages for every target country.)
+### 13: Delivery Delays & Geographic Purchasing Power (M&A Capstone Matrix)
+**Business Question:** Generate a comprehensive macro-economic overview analyzing market size, total revenue, shipping non-fulfillment rates, and localized shipping compliance percentages for every target country.
 
 ```sql
 WITH order_level AS (
@@ -383,7 +382,7 @@ LIMIT 3;
 *   **Execution Output (Top 3 Highest-Value Global Markets):**
     *   USA | Customers: 13 | Orders: 122 | Before Target: 91.8% | Delayed: 5.7% | On Target: NaN | Lost/Unshipped: 2.5% | Total Revenue: $263,536.9
     *   Germany | Customers: 11 | Orders: 122 | Before Target: 94.3% | Delayed: 3.3% | On Target: 0.8% | Lost/Unshipped: 1.6% | Total Revenue: $244,083.0
-    *   **Austria | Customers: 2 | Orders: 40 | Before Target: 92.5% | Delayed: 2.5% | On Target: NaN | Lost/Unshipped: 5.0% | Total Revenue: $139,496.6 (Quiz Milestone Line 3)**
+    *   Austria | Customers: 2 | Orders: 40 | Before Target: 92.5% | Delayed: 2.5% | On Target: NaN | Lost/Unshipped: 5.0% | Total Revenue: $139,496.6 
 *   **Business Takeaway:** This macro-matrix serves as a strategic corporate guide. By calculating purchase power combined with logistics friction, it reveals that Austria represents an exceptionally high-value market. Despite having only 2 corporate customers, Austria generates more than half the revenue of the entire German market (11 customers). However, Austria's unfulfilled delivery rate (`perc_ords_no_ship`) sits at a high 5.0%, showing an immediate supply chain vulnerability that requires operational correction.
 ---
 
