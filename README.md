@@ -385,4 +385,10 @@ LIMIT 3;
     *   Germany | Customers: 11 | Orders: 122 | Before Target: 94.3% | Delayed: 3.3% | On Target: 0.8% | Lost/Unshipped: 1.6% | Total Revenue: $244,083.0
     *   **Austria | Customers: 2 | Orders: 40 | Before Target: 92.5% | Delayed: 2.5% | On Target: NaN | Lost/Unshipped: 5.0% | Total Revenue: $139,496.6 (Quiz Milestone Line 3)**
 *   **Business Takeaway:** This macro-matrix serves as a strategic corporate guide. By calculating purchase power combined with logistics friction, it reveals that Austria represents an exceptionally high-value market. Despite having only 2 corporate customers, Austria generates more than half the revenue of the entire German market (11 customers). However, Austria's unfulfilled delivery rate (`perc_ords_no_ship`) sits at a high 5.0%, showing an immediate supply chain vulnerability that requires operational correction.
+---
+
+## 12. License / Lizenz
+This project utilizes the industry-standard Northwind database schema, which is open-source and distributed under the **MIT License**. 
+
+Dieses Projekt verwendet das standardisierte Northwind-Datenbankschema, welches als Open-Source-Software unter der **MIT-Lizenz** bereitgestellt wird.
 
