@@ -1,7 +1,17 @@
 # northwind-data-analysis
 SQL data analysis project for Northwind Foods post-merger business integration.
-# SQL Project: Northwind Foods Data Analysis Case Study
+## Profile & Core Competencies / Kompetenzprofil
+### English Summary
+*   **Project Goal:** Analyzed the global B2B Northwind database to deliver data-driven insights on operational scale, supply chain efficiency, procurement costs, and shipping carrier SLAs.
+*   **Technical Skills Applied:** Multi-table Joins (`INNER`, `LEFT`), Advanced Aggregations (`COUNT`, `SUM`, `AVG`), Group Filtering (`HAVING`), Reusable Database Views (`CREATE VIEW`), Subqueries (`NOT IN`), and Common Table Expressions (CTEs) with conditional logic (`CASE WHEN`).
+*   **Business Value:** Demonstrated ability to audit tied-up warehouse capital, track logistics delivery compliance, and evaluate international market purchasing power.
+*   
+### Deutsche Zusammenfassung
+*   **Projektziel:** Analyse der globalen B2B-Northwind-Datenbank zur Bereitstellung datengestützter Erkenntnisse über Betriebsskalierung, Lieferketteneffizienz, Beschaffungskosten und Speditions-SLAs.
+*   **Angewandte Hard Skills:** Multi-Tabellen-Joins (`INNER`, `LEFT`), fortgeschrittene Aggregationen (`COUNT`, `SUM`, `AVG`), Gruppenfilterung (`HAVING`), wiederverwendbare Datenbank-Views (`CREATE VIEW`), Subqueries (`NOT IN`) und Common Table Expressions (CTEs) mit bedingter Logik (`CASE WHEN`).
+*   **Geschäftlicher Nutzen:** Nachgewiesene Kompetenz bei der Prüfung von gebundenem Lagerkapital, der Überwachung von Logistik-Liefertreue und der Bewertung internationaler Kaufkraft.
 
+---
 ## 1. Project Overview & Scenario
 This project is an analysis of the Northwind Foods database. Northwind Foods is a global company that imports and exports gourmet delicacies, purchasing products from various suppliers and selling them to corporate B2B clients. The deliveries are transported via freight shipping companies. 
 
@@ -252,4 +262,127 @@ LIMIT 3;
     *   Chocolade | Zaanse Snoepfabriek
     *   Gumbär Gummibärchen | Heli Süßwaren GmbH & Co. KG
     *   **Maxilaku | Karkki Oy **
-*   **Business Takeaway:** This task demonstrates the operational utility of a view layer. By querying the virtual table directly, we isolate specific category lines and track supplier distribution networks instantly without repeating expensive join instructions. 
+*   **Business Takeaway:** This task demonstrates the operational utility of a view layer. By querying the virtual table directly, we isolate specific category lines and track supplier distribution networks instantly without repeating expensive join instructions.
+
+*   ### Aufgabe 10: Exclusive Vendor Segment Isolation (Subqueries & Set Logic)
+**Business Question:** Gib eine Liste aller Lieferunternehmen aus, die Produkte aus der Kategorie 'Grains/Cereals' liefern, aber keine Produkte der Kategorie 'Dairy Products'. Sortiere die Liste alphabetisch nach den Namen der Lieferunternehmen. (Extract a distinct list of all suppliers that deliver products in the 'Grains/Cereals' category, but strictly do not supply any products from the 'Dairy Products' category, ordered alphabetically.)
+
+```sql
+SELECT 
+    CompanyName, 
+    CategoryName,
+    ProductName 
+FROM suppliersproducts
+WHERE CategoryName = 'Grains/Cereals'
+  AND CompanyName NOT IN (
+      SELECT CompanyName
+      FROM suppliersproducts 
+      WHERE CategoryName = 'Dairy Products'
+  )
+ORDER BY CompanyName ASC 
+LIMIT 3;
+```
+
+*   **Execution Output (Target Vendor Segment):**
+    *   G'day, Mate | Grains/Cereals | Filo Mix
+    *   Leka Trading | Grains/Cereals | Singaporean Hokkien Fried Mee
+    *   **Pasta Buttini s.r.l. | Grains/Cereals | Gnocchi di nonna Alice (Quiz Milestone Line 3)**
+*   **Business Takeaway:** This query applies cross-category exclusion logic to isolate specific vendor characteristics. In procurement, identifying suppliers that specialize heavily in one niche (Grains/Cereals) while having zero footprint in another volatile market (Dairy Products) allows risk management teams to map supplier dependencies and negotiate targeted service level agreements (SLAs).
+### Aufgabe 11: Multi-Category Vendor Pricing Analysis (The HAVING Clause)
+**Business Question:** Gib eine Liste aller Lieferunternehmen aus, die Produkte aus den Kategorien 'Beverages' oder 'Condiments' liefern und deren durchschnittliche Produktpreise mindestens 17 Euro betragen. Sortiere absteigend nach dem Durchschnittspreis. (Extract all suppliers delivering 'Beverages' or 'Condiments' whose average product price is at least 17 Euros, sorted by average price descending.)
+
+```sql
+SELECT 
+    CompanyName,
+    AVG(UnitPrice) AS average_price
+FROM suppliersproducts
+WHERE CategoryName IN ('Beverages', 'Condiments')
+GROUP BY CompanyName
+HAVING AVG(UnitPrice) >= 17 
+ORDER BY average_price DESC
+LIMIT 3;
+```
+
+*   **Execution Output (Top 3 Premium Beverage & Condiment Suppliers):**
+    *   Aux joyeux ecclésiastiques | 140.750
+    *   Leka Trading | 32.725
+    *   **Grandma Kelly's Homestead | 32.500 (Quiz Milestone Line 3)**
+*   **Business Takeaway:** This query demonstrates advanced aggregated filtering using the `HAVING` clause to isolate premium, high-margin vendors within targeted inventory categories. Identifying suppliers with high average order costs helps finance and procurement teams target the right vendor partnerships for strategic volume discount negotiations.
+---
+
+## 10. Logistics Performance & Shipping SLA Audits
+
+### Schema Expansion: Freight Fulfillment
+To measure logistical reliability and transportation efficiency, we map the downstream distribution network:
+*   `Shippers`: Contains the list of external shipping partners and links directly to the `Orders` ledger where the carrier ID is recorded under the column `ShipVia`.
+
+### Aufgabe 12: Shipping Carrier Fulfillment & Capacity Performance
+**Business Question:** Wie ist die Performance der Speditionen? (What is the performance profile of each shipping carrier regarding average fulfillment speed in days, delivery volume, and freight weight distributions?)
+
+```sql
+SELECT 
+    s.CompanyName AS shipper,
+    ROUND(AVG(DATEDIFF(o.ShippedDate, o.OrderDate)), 1) AS avg_diff_order_shipping,
+    ROUND(AVG(o.Freight), 1) AS avg_freight,
+    ROUND(MIN(o.Freight), 1) AS min_freight,
+    ROUND(MAX(o.Freight), 1) AS max_freight,
+    COUNT(o.OrderID) AS num_orders
+FROM Orders AS o
+JOIN Shippers AS s ON o.ShipVia = s.ShipperID
+GROUP BY s.CompanyName
+ORDER BY s.CompanyName ASC
+LIMIT 3;
+```
+
+*   **Execution Output (Complete Logistics Portfolio):**
+    *   Federal Shipping | Avg Speed: 7.5 days | Avg Freight: 80.4 | Min: 0.4 | Max: 1007.6 | Orders: 255
+    *   Speedy Express | Avg Speed: 8.6 days | Avg Freight: 65.0 | Min: 0.1 | Max: 458.8 | Orders: 249
+    *   **United Package | Avg Speed: 9.2 days | Avg Freight: 86.6 | Min: 1.4 | Max: 890.8 | Orders: 326 (Quiz Milestone Line 3)**
+*   **Business Takeaway:** This service level agreement (SLA) report evaluates logistical bottlenecks. While Federal Shipping provides the fastest turnaround times (7.5 days on average), United Package absorbs the highest logistical stress, moving the largest total package volume (326 orders) and maintaining the heaviest average cargo load capacity (86.6).
+
+---
+
+## 11. Strategic Market Insights & Advanced Analytics Case
+
+### Aufgabe 13: Delivery Delays & Geographic Purchasing Power (M&A Capstone Matrix)
+**Business Question:** Welche Lieferverzögerungen gibt es pro Land? (Generate a comprehensive macro-economic overview analyzing market size, total revenue, shipping non-fulfillment rates, and localized shipping compliance percentages for every target country.)
+
+```sql
+WITH order_level AS (
+    SELECT
+        o.OrderID, 
+        c.Country, 
+        c.CustomerID,
+        CASE
+            WHEN o.ShippedDate IS NULL THEN 'no_ship'
+            WHEN o.ShippedDate < o.RequiredDate THEN 'before'
+            WHEN o.ShippedDate = o.RequiredDate THEN 'on'
+            ELSE 'after'	
+        END AS ship_status,	
+        SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)) AS order_revenue 
+    FROM Orders o
+    JOIN Customers c ON o.CustomerID = c.CustomerID
+    LEFT JOIN Order_Details od ON o.OrderID = od.OrderID
+    GROUP BY o.OrderID, c.Country, c.CustomerID, ship_status
+)
+SELECT
+    Country,
+    COUNT(DISTINCT CustomerID) AS num_cust, 
+    COUNT(DISTINCT OrderID) AS num_ord,
+    ROUND(100.0 * COUNT(CASE WHEN ship_status = 'before' THEN 1 END) / COUNT(OrderID), 1) AS perc_ords_before_req,
+    ROUND(100.0 * COUNT(CASE WHEN ship_status = 'after' THEN 1 END) / COUNT(OrderID), 1) AS perc_ords_after_req,
+    ROUND(100.0 * COUNT(CASE WHEN ship_status = 'on' THEN 1 END) / COUNT(OrderID), 1) AS perc_ords_on_req,
+    ROUND(100.0 * COUNT(CASE WHEN ship_status = 'no_ship' THEN 1 END) / COUNT(OrderID), 1) AS perc_ords_no_ship,
+    ROUND(SUM(order_revenue), 1) AS total_revenue
+FROM order_level
+GROUP BY Country
+ORDER BY total_revenue DESC 
+LIMIT 3;
+```
+
+*   **Execution Output (Top 3 Highest-Value Global Markets):**
+    *   USA | Customers: 13 | Orders: 122 | Before Target: 91.8% | Delayed: 5.7% | On Target: NaN | Lost/Unshipped: 2.5% | Total Revenue: $263,536.9
+    *   Germany | Customers: 11 | Orders: 122 | Before Target: 94.3% | Delayed: 3.3% | On Target: 0.8% | Lost/Unshipped: 1.6% | Total Revenue: $244,083.0
+    *   **Austria | Customers: 2 | Orders: 40 | Before Target: 92.5% | Delayed: 2.5% | On Target: NaN | Lost/Unshipped: 5.0% | Total Revenue: $139,496.6 (Quiz Milestone Line 3)**
+*   **Business Takeaway:** This macro-matrix serves as a strategic corporate guide. By calculating purchase power combined with logistics friction, it reveals that Austria represents an exceptionally high-value market. Despite having only 2 corporate customers, Austria generates more than half the revenue of the entire German market (11 customers). However, Austria's unfulfilled delivery rate (`perc_ords_no_ship`) sits at a high 5.0%, showing an immediate supply chain vulnerability that requires operational correction.
+
